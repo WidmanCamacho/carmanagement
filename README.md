@@ -1,148 +1,113 @@
-# Car Management API
+# Car Management System
 
-Este proyecto es una API REST desarrollada con Spring Boot para la gestión de vehículos, que incluye autenticación JWT y operaciones CRUD.
+Este es un sistema de gestión de vehículos desarrollado con Spring Boot para el backend y React para el frontend.
 
-## Requisitos Previos
+## Requisitos del Sistema
 
-- Java JDK 17 o superior
-- SQL Server
-- Maven (opcional, se puede usar el wrapper incluido)
-- Un cliente REST como Postman para probar los endpoints
+- Java 17 (JDK)
+- Maven
+- SQL Server Express
+- Node.js y npm (para el frontend)
 
-## Configuración de la Base de Datos
+## Configuración del Entorno
 
-1. Asegúrate de tener SQL Server instalado y corriendo
-2. La aplicación está configurada para conectarse a:
-   - Servidor: `PC\SQLEXPRESS`
-   - Usuario: `sa`
-   - Contraseña: `4dm1n1str4t0r`
+### 1. Configuración de Java
 
-## Configuración del Proyecto
+1. Instalar Java 17:
+   - Descargar OpenJDK 17 desde [Adoptium](https://adoptium.net/temurin/releases/?version=17)
+   - Seleccionar la versión para Windows (x64 MSI)
+   - Ejecutar el instalador
 
-1. Clona el repositorio:
-   ```bash
-   git clone <url-del-repositorio>
-   cd carmanagement
-   ```
+2. Configurar JAVA_HOME:
+   - Abrir Variables de Entorno del Sistema (Windows + R, escribir `sysdm.cpl`)
+   - En Variables del Sistema, crear nueva variable:
+     - Nombre: `JAVA_HOME`
+     - Valor: `C:\Program Files\Eclipse Adoptium\jdk-17.0.10.7-hotspot` (o tu ruta de instalación)
+   - En la variable PATH, agregar: `%JAVA_HOME%\bin`
 
-2. Configura la base de datos en `src/main/resources/application.properties`:
-   ```properties
-   spring.datasource.url=jdbc:sqlserver://PC\\SQLEXPRESS:1433;databaseName=carmanagement;encrypt=true;trustServerCertificate=true
-   spring.datasource.username=sa
-   spring.datasource.password=4dm1n1str4t0r
-   ```
+### 2. Configuración de Base de Datos
 
-## Ejecutar el Proyecto
-
-1. Usando Maven Wrapper (recomendado):
-   ```bash
-   ./mvnw spring-boot:run   # En Linux/Mac
-   .\mvnw.cmd spring-boot:run  # En Windows
-   ```
-
-2. Usando Maven (si está instalado):
-   ```bash
-   mvn spring-boot:run
-   ```
-
-La aplicación estará disponible en: `http://localhost:8080`
-
-## Endpoints Disponibles
-
-### Autenticación
-
-#### Registro de Usuario
-- **URL**: `POST /api/auth/register`
-- **Body**:
-  ```json
-  {
-      "userName": "usuario1",
-      "email": "usuario1@ejemplo.com",
-      "password": "tu_contraseña",
-      "userAddress": "Tu dirección"
-  }
-  ```
-
-#### Login
-- **URL**: `POST /api/auth/login`
-- **Body**:
-  ```json
-  {
-      "email": "usuario1@ejemplo.com",
-      "password": "tu_contraseña"
-  }
-  ```
-
-### Gestión de Coches
-
-Para todos los endpoints de coches, se requiere el token JWT en el header:
-```
-Authorization: Bearer tu_token_jwt
+1. Instalar SQL Server Express
+2. Configurar la base de datos en `application.properties`:
+```properties
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=car_management;encrypt=true;trustServerCertificate=true
+spring.datasource.username=tu_usuario
+spring.datasource.password=tu_contraseña
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
 ```
 
-#### Crear Coche
-- **URL**: `POST /api/cars`
-- **Body**:
-  ```json
-  {
-      "brand": "Toyota",
-      "model": "Corolla",
-      "carYear": 2023,
-      "licensePlate": "ABC123",
-      "color": "Red"
-  }
-  ```
+## Estructura del Proyecto
 
-#### Obtener Todos los Coches del Usuario
-- **URL**: `GET /api/cars`
+### Backend (Spring Boot)
 
-#### Obtener un Coche Específico
-- **URL**: `GET /api/cars/{id}`
-- **Ejemplo**: `GET /api/cars/11`
+- **Controladores**: Manejo de endpoints REST
+  - `AuthController`: Gestión de autenticación
+  - `CarController`: Gestión de vehículos
 
-#### Actualizar un Coche
-- **URL**: `PUT /api/cars/{id}`
-- **Body**:
-  ```json
-  {
-      "brand": "Toyota",
-      "model": "Corolla",
-      "carYear": 2023,
-      "licensePlate": "ABC123",
-      "color": "Blue"
-  }
-  ```
+- **Servicios**: Lógica de negocio
+  - `AuthenticationService`: Servicios de autenticación
+  - `CarService`: Servicios de gestión de vehículos
+  - `JwtService`: Servicios de JWT
+  - `CustomUserDetailsService`: Servicios de usuario
 
-#### Eliminar un Coche
-- **URL**: `DELETE /api/cars/{id}`
-- **Ejemplo**: `DELETE /api/cars/11`
+- **Modelos**:
+  - `User`: Entidad de usuario
+  - `Car`: Entidad de vehículo
 
-## Validaciones
+- **Seguridad**:
+  - JWT Authentication
+  - CORS Configuration
+  - Spring Security
 
-- El año del coche (`carYear`) debe estar entre 1920 y 2024
-- La placa del coche (`licensePlate`) debe ser única
-- Todos los campos son obligatorios
-- El email debe ser único en el sistema
-- Solo puedes gestionar los coches que te pertenecen
+### Frontend (React)
 
-## Respuestas de Error
+El frontend se ejecuta en `http://localhost:3000` y se comunica con el backend en `http://localhost:8080`.
 
-La API devuelve los siguientes códigos de estado HTTP:
-- 200: Operación exitosa
-- 201: Recurso creado exitosamente
-- 400: Error de validación
-- 401: No autenticado
-- 403: No autorizado
-- 404: Recurso no encontrado
-- 500: Error interno del servidor
+## Configuración de CORS
+
+El backend está configurado para aceptar peticiones desde el frontend con las siguientes características:
+- Origen permitido: `http://localhost:3000`
+- Métodos HTTP: GET, POST, PUT, DELETE, OPTIONS
+- Headers permitidos: Authorization, Content-Type, X-Requested-With
+- Credenciales: Permitidas
+- Tiempo de caché: 3600 segundos
+
+## Ejecución del Proyecto
+
+### Backend
+```bash
+# Limpiar y compilar
+./mvnw clean package
+
+# Ejecutar
+./mvnw spring-boot:run
+```
+
+El backend estará disponible en `http://localhost:8080`
+
+### API Endpoints
+
+#### Autenticación
+- POST `/api/auth/register`: Registro de usuarios
+- POST `/api/auth/login`: Inicio de sesión
+
+#### Vehículos
+- GET `/api/cars`: Listar vehículos
+- POST `/api/cars`: Crear vehículo
+- GET `/api/cars/{id}`: Obtener vehículo por ID
+- PUT `/api/cars/{id}`: Actualizar vehículo
+- DELETE `/api/cars/{id}`: Eliminar vehículo
 
 ## Seguridad
 
-- La API utiliza JWT (JSON Web Tokens) para la autenticación
-- Las contraseñas se almacenan hasheadas en la base de datos
-- Cada usuario solo puede acceder y modificar sus propios coches
-- Los tokens JWT expiran después de un tiempo determinado
+- Autenticación basada en JWT
+- Contraseñas encriptadas con BCrypt
+- Validación de datos en DTOs
+- Manejo global de excepciones
 
-## Soporte
+## Notas de Versión
 
-Si encuentras algún problema o tienes alguna pregunta, por favor abre un issue en el repositorio. 
+### Última Actualización
+- Actualización a Java 17
+- Configuración de CORS para permitir peticiones desde el frontend
+- Mejoras en la seguridad y manejo de autenticación 
