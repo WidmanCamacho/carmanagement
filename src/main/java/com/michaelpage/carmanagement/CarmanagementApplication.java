@@ -1,0 +1,17 @@
+package com.michaelpage.carmanagement;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+@SpringBootApplication
+@EntityScan("com.michaelpage.carmanagement.model")
+@EnableJpaRepositories("com.michaelpage.carmanagement.repository")
+public class CarmanagementApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CarmanagementApplication.class, args);
+	}
+
+}
